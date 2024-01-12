@@ -64,7 +64,7 @@ if ~PerformTuningParams; IncludeNtuning = false;  UseLPRtuning = false;  end
 %% Noise on the variables
 FullScaleCd          = max(abs(Cd_unforced));
 FullScaleCl          = max(abs(Cl_unforced));
-NoiseLevel           = 5;                % The noise is given in percentage of unforced Cd/Cl full scales
+NoiseLevel           = 1;                % The noise is given in percentage of unforced Cd/Cl full scales
 
 Noise_Cd             = NoiseLevel/100*FullScaleCd * double(AddNoise); 
 Noise_Cl             = NoiseLevel/100*FullScaleCl * double(AddNoise);       
