@@ -1,0 +1,62 @@
+function [LPRy, LPRyderiv, ExecuteID] = RunLPR_R(x,y,xv)
+
+%% Description:
+% This function performs data smoothing using local polynomial regression (LPR) 
+
+%%% Inputs:
+% - x:         Domain of the samples of the regression function
+% - y:         Matrix with the samples of the regression function. The time series
+% must be in columns
+% - y:         Domain where to evaluate the LPR prediction
+
+%%% Outputs:
+% - LPRy:      Regression function estimation of the time series in y in the points in xv
+% - LPRyderiv: Regression function derivative (wrt x) estimation of the time series in y in the points in xv
+
+% Read current folder
+FolderFunction =  cd + "\utils_LPR";
+
+% Reshape domain vectors in column vectors
+x  =  x(:);
+xv = xv(:);
+
+% Count the number of timeseries to consider
+numVars = size(y,2);
+
+% Check on vector lengths
+if length(x) ~= size(y,1)
+    error("LPR function: The number of rows of x must be the same of the number of rows of y. Please check the input given to RunLPR_R function")
+end
+
+% Delete input/output data from previous function run
+if isfile(FolderFunction + "\Samples.txt");  delete(FolderFunction + "\Samples.txt") ;end
+if isfile(FolderFunction + "\Domain.txt");   delete(FolderFunction + "\Domain.txt")  ;end
+if isfile(FolderFunction + "\Output.txt");   delete(FolderFunction + "\Output.txt")  ;end
+
+% Write the input file for LPR estimation in R
+writematrix([x,y]  , FolderFunction + "\Samples.txt",'delimiter' ,'tab');
+writematrix(xv     , FolderFunction + "\Domain.txt" ,'delimiter' ,'tab');
+
+% Execute Rscript from terminal
+% ExecuteID = system("R CMD BATCH " + FolderFunction + "\CodeR_LPR.R");
+% [status, result] = system("""C:\Program Files\R\R-4.3.1\bin\Rscript.exe """ + FolderFunction + "\CodeR_LPR.R");
+
+% For windows
+FolderFunction = char(FolderFunction); % Replace with the actual path
+% command = ['"', 'C:\Program Files\R\R-4.2.2\bin\Rscript.exe', '" "', FolderFunction, '\CodeR_LPR.R"'];
+command = ['"', '*RSCRIPTPATH*', '" "', FolderFunction, '\CodeR_LPR.R"'];
+ExecuteID = system(command);
+
+% Read the results written in the file Output.txt
+Out = readmatrix(FolderFunction + "\Output.txt");
+
+% Extract the data from file
+LPRy      = Out(:, 2:numVars+1);
+LPRyderiv = Out(:, numVars+2:end);
+
+end
+
+
+
+
+
