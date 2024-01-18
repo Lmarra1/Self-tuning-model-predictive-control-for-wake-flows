@@ -7,9 +7,8 @@ lw     = 1.5;                                 % Default linewidth in figures
 axislw = 1;                                   % Default axis linewidth for figures
 colr   = ["k","r","b"];                       % Colors for plots 
 
-
+warning off
 % --- Settings ---
-warning off;
 set(0,'DefaultFigureColor'    ,'w')         
 set(0,'DefaultLineLineWidth'  ,lw)
 set(0,'DefaultAxesFontSize'   ,fs)
@@ -23,4 +22,4 @@ set(0,'defaultTextInterpreter'         ,'latex');
 set(0,'DefaultAxesTickLabelInterpreter','latex');   
 
 % --- Add util folders to Matlab path  ---
-addpath('utils_MPC','utils_LPR','utils_BO','DATA');
+addpath('utils_LPR','utils_BO','DATA');

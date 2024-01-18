@@ -20,7 +20,7 @@ This repository contains MATLAB code for the application of model predictive con
 
 ## Repository Information
 
-- Repository URL: [https://github.com/Lmarra1/Self-tuning-model-predictive-control-for-wake-flows](https://github.com/Lmarra1/Self-tuning-model-predictive-control-for-wake-flows)
+- Repository URL: https://github.com/Lmarra1/Self-tuning-model-predictive-control-for-wake-flows
 
 
 ## Associated Research Paper
@@ -29,7 +29,7 @@ This repository contains MATLAB code for the application of model predictive con
 - Authors: Luigi Marra, Andrea Meilán-Vila, Stefano Discetti
 - Journal: Journal of Fluid Mechanics
 - Year: 2024
-- DOI: TBD
+- DOI: 10.1017/jfm.2024.47
 
 
 ## Requirements
@@ -43,21 +43,30 @@ This repository contains MATLAB code for the application of model predictive con
 
 The code is written in MATLAB.
 
-For certain functionalities, R is required. You'll need to install the `lokern` package in R. Follow the steps below:
+For certain functionalities, R is required.
 
 1. Install R: [Download R](https://www.r-project.org/)
 2. Install RStudio (optional but recommended): [Download RStudio](https://www.rstudio.com/products/rstudio/download/)
-3. Open R or RStudio.
-4. Install the `lokern` package by running the following command:
+3. Identify the path to `Rscript.exe`.
+4. Open the Matlab function 'SetUp.m' and paste the Rscript.exe path where specified
+5. Run the MATLAB script 'SetUp.m'
+6. Run the code 'MPC_main.m'
+7. ...ENJOY!
+
+
+Part of the code was implemented based on the MPC code of the article:
+Kaiser, E., Kutz, J. N., & Brunton, S. L. (2018). Sparse identification of nonlinear 
+dynamics for model predictive control in the low-data limit. 
+Proceedings of the Royal Society A, 474(2219), 20180335.
+
+
+--------------------
+If the installation of the 'lokern' package fails, you can manually run the following command in R or Rstudio:
 
     ---
     install.packages("lokern")
     ---
 
-5. Identify the path to `Rscript.exe`.
-6. Open the Matlab function 'SetUp.m' and paste the Rscript.exe path where specified
-7. Run the MATLAB script 'SetUp.m'
-8. Run the code 'MPC_main.m'
-9. ...ENJOY!
+
 
 

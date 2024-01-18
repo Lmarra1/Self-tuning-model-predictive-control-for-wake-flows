@@ -34,12 +34,16 @@ ck = ak(1:2,2:N+1);
 bk = b(:,1);
 J  = 0;
 
+if size(cstar,2) ~= N
+    cstar = repmat(cstar,1,N);
+end
+
 %% Loop through each prediction step
 for k=1:N
 
     ck1 = ck(:,k);
 
-    J = J + (ck1-cstar)'* diag(Q) *(ck1-cstar);
+    J = J + (ck1-cstar(k))'* diag(Q) *(ck1-cstar(k));
 
     if k==1
         J = J + (bk-b0)'* diag(Rdu) *(bk-b0) + bk'*diag(Ru)*bk;
@@ -57,40 +61,6 @@ end
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%% Comments - case of control with torque in the state vector (to minimize total Power used)
-% if IncludeTorque
-% Kres = 1;
-% Kact = 1;
-% Kdeltau = 1;
-% 
-% for ct = 1:N
-%     J = J + (xk(1,ct) + 0.1*abs(xk(2,ct)))/2*Kres*(xk(1,ct) + 0.1*abs(xk(2,ct))).';
-%     J = J + xk(3,ct)*Kact*xk(3,ct).'*u(ct)^2 + xk(4,ct)*Kact*xk(4,ct).'*u(ct)^2;
-%     if ct==1
-%         J = J + (uk-u0)'*Kdeltau*(uk-u0);
-%     else
-%         J = J + (uk-u(ct-1))'*Kdeltau*(uk-u(ct-1));
-%     end
-% end
-
-% else
 
 
 

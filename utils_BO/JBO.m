@@ -1,7 +1,7 @@
 function J_BO = JBO(eta,Param)
 
 %% Description:
-% This function runs an MPC simulation using a specific set of control parameters. 
+% This function runs an MPC simulation using a specific set of control parameters.
 % It is used to sample the cost functional J_BO (based on MPC control results) during Bayesian optimization.
 
 %%% Inputs:
@@ -31,14 +31,16 @@ b0                      = Param.b0;
 UseLPR                  = Param.UseLPRtuning;
 IncludeNtuning          = Param.IncludeNtuning;
 Xi                      = Param.Xi;
-
-
+MPCPlotVerbose          = Param.MPCPlotVerbose;
+t_ref                   = Param.t_ref;
+Cd_ref                  = Param.Cd_ref;
+Cl_ref                  = Param.Cl_ref;
 
 %% Get tuning Parameters for current optimization step
 [Q, Rdu, Ru, N] = ReadTuningParamsfromEta(table2array(eta));
 
 if ~IncludeNtuning
-    N           = Param.N;
+    N           = round(Param./dt);
 else
     N           = round(N/dt);
 end
@@ -48,10 +50,10 @@ LB = repmat(LB,1,N);
 UB = repmat(UB,1,N);
 
 %% Other variables to set
-Nt         =  (Duration/dt)+1;         % Number of Total Timestep of pinball-code calcs.
+Nt         =  round((Duration/dt))+1;         % Number of Total Timestep of pinball-code calcs.
 c          =  a0(1:2) + randn(size(a0(1:2))) .* Sigma * double(AddNoise);
 T          =  0;
-
+Ts_dt      =  round(Ts/dt);
 
 %% Initialize storage variables
 a_History           =  nan(4,Nt);           a_History(:,1)       =   a0;
@@ -73,7 +75,10 @@ for j = 1:(Duration/Ts)
     end
 
     %% Set reference state to follow
-    cstar = ReferenceTrajectory_tuning(T,StartControl);
+    cstar = interp1(t_ref,[Cd_ref;Cl_ref].',T,"linear").';
+%     if false
+%        cstar = interp1(t_ref,[Cd_ref;Cl_ref].',T:dt:T+(N-1)*dt,"linear").'; 
+%     end
 
     %% Perform (control on/off) calculations for optimal input vector
     if T < StartControl
@@ -81,18 +86,18 @@ for j = 1:(Duration/Ts)
     else
 
         if UseLPR && T >= StartLPR
-            c_Deriv = c_Deriv_LPR_History(:,Ts/dt*(j-1)+1);
+            c_Deriv = c_Deriv_LPR_History(:,Ts_dt*(j-1)+1);
         else
             %Calculate states derivative with finite differences
             for ii = 2:-1:1
-                c_Deriv(ii)      = CalcDeriv(t_History(1:Ts/dt*(j-1)+1), c_History(ii,1:Ts/dt*(j-1)+1), length(1:Ts/dt*(j-1)+1));
+                c_Deriv(ii)      = CalcDeriv(t_History(1:Ts_dt*(j-1)+1), c_History(ii,1:Ts_dt*(j-1)+1), length(1:Ts_dt*(j-1)+1));
             end
         end
 
 
         %%Define the IC for the prediction in the Optimal Problem
         if UseLPR && T >= StartLPR
-            Pred_IC   = [c_LPR_History(:,Ts/dt*(j-1)+1); c_Deriv(:)];
+            Pred_IC   = [c_LPR_History(:,Ts_dt*(j-1)+1); c_Deriv(:)];
         else
             Pred_IC   = [c(:,end); c_Deriv(:)];
         end
@@ -111,7 +116,7 @@ for j = 1:(Duration/Ts)
 
 
     %% Plant integration
-    for tt = 1:Ts/dt
+    for tt = 1:Ts_dt
         a(:,tt+1) = rk_SINDYc(a(:,tt), b_opt(:,1), dt, 1, Xi, 2);
     end
 
@@ -121,18 +126,23 @@ for j = 1:(Duration/Ts)
 
 
     %% Save variables
-    index = Ts/dt*(j-1)+2:Ts/dt*j + 1;
+    index = Ts_dt*(j-1)+2:Ts_dt*j + 1;
     a_History(:,index)       =  a(:,2:end);
     c_History(:,index)       =  c(:,2:end);
-    b_History(:,index)       =  repmat(b_opt(:,1),1,Ts/dt);
+    b_History(:,index)       =  repmat(b_opt(:,1),1,Ts_dt);
     t_History(index)         =  Ts*(j-1)+dt:dt:Ts*j;
-    cstar_History(:,index)   =  repmat(cstar,1,Ts/dt);
+    if size(cstar,2) == N
+        cstar_History(:,index)  =  cstar(:,1:Ts_dt);
+    else
+        cstar_History(:,index)  =  repmat(cstar,1,Ts_dt);
+    end
+
     %%%
 
 
     %% Calculate LPR of the state
     if UseLPR && AddNoise
-        index = 1:Ts/dt*j+1;
+        index = 1:Ts_dt*j+1;
         if T == StartLPR-Ts
             [LPRc, LPRcderiv]          = RunLPR_R(t_History(index).', c_History(:,index).', t_History(index).');
             c_LPR_History(:,index)                = LPRc.';
@@ -140,10 +150,10 @@ for j = 1:(Duration/Ts)
 
         elseif T >= StartLPR
             [LPRc, LPRcderiv]    = RunLPR_R(t_History(index).', c_History(:,index).', t_History(index).');
-            LPRc       = LPRc(end-Ts/dt+1:end,:);
-            LPRcderiv  = LPRcderiv(end-Ts/dt+1:end,:);
+            LPRc       = LPRc(end-Ts_dt+1:end,:);
+            LPRcderiv  = LPRcderiv(end-Ts_dt+1:end,:);
 
-            index = Ts/dt*(j-1)+2:Ts/dt*j + 1;
+            index = Ts_dt*(j-1)+2:Ts_dt*j + 1;
             c_LPR_History(:,index)       = LPRc.';
             c_Deriv_LPR_History(:,index) = LPRcderiv.';
 
@@ -154,28 +164,29 @@ for j = 1:(Duration/Ts)
     %% Update time and continue
     T = j*Ts;
 
-
-    %% PLOT ONLINE-DATA
-    Case =  "Tuning";
-    run("OnlinePlot.m")
-
+    %% Plot some data online (states, actuation etc...)
+    if any(MPCPlotVerbose == [1 2]) && T < Duration
+        run("OnlinePlot.m")
+    end
 
 end
-close(figure(10))
+
+if MPCPlotVerbose == 0
+    run("OnlinePlot.m")
+end
+
+
+%%%
 
 if UseLPR && AddNoise
     StateHist   = RunLPR_R(t_History.', c_History.', t_History.');
     StateHist   = StateHist.';
 else
-    StateHist   = cHistory;
+    StateHist   = c_History;
 end
 
 
 %% Evaluate the cost functional
-J_BO = evalJBO(StateHist(:,1:Ts/dt:end),cstar_History(:,1:Ts/dt:end),b_History(:,1:Ts/dt:end),Param.DT,Ts);
+J_BO = evalJBO(StateHist(:,1:Ts_dt:end),cstar_History(:,1:Ts_dt:end),b_History(:,1:Ts_dt:end),Param.DT,Ts);
 
 end
-
-
-
-
