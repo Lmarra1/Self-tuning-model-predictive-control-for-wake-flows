@@ -2,7 +2,10 @@
 
 ## Overview
 
-This repository contains MATLAB code for the application of model predictive control (MPC) with control parameters identified through Bayesian optimization. The control plant used is the chaotic wake of the fluidic pinball at Reynolds number Re = 150. The plant model is obtained using the SINDYc technique. Control is applied for drag reduction and lift stabilization, considering the challenge of measurement noise in control sensors. Noise mitigation is achieved using the Local Polynomial Regression technique.
+This repository contains MATLAB code for the application of model predictive control (MPC) with control parameters not manually selected but identified through a Bayesian optimization method. The selected control plant is the chaotic wake of the fluidic pinball at Reynolds number Re_D = 150. A plant model is obtained using the SINDYc technique. Control is applied for drag reduction and lift stabilization, with the challenge posed by the presence of measurement noise in the control sensors. The effect of noise is mitigated using the Local Polynomial Regression technique.
+
+Unlike the associated research paper, the plant here also corresponds with the plant model obtained with the SINDYc technique.
+
 
 ## Key Features
 
@@ -68,5 +71,8 @@ If the installation of the 'lokern' package fails, you can manually run the foll
     ---
 
 
+
+## Funding 
+The authors acknowledge the support from the research project PREDATOR-CM-UC3M. This project has been funded by the call "Estímulo a la Investigación de Jóvenes Doctores/as" within the frame of the Convenio Plurianual CM-UC3M and the V PRICIT (V Regional Plan for Scientific Research and Technological Innovation).
 
 
