@@ -44,7 +44,8 @@ run("Settings")
 openDocuments = matlab.desktop.editor.getAll;
 
 if ~any(endsWith({openDocuments.Filename}, "SetParameters.m"))
-    open("SetParameters")
+    open("SetParameters"); disp("Please set your control parameters in SetParameters.m ...");
+    keyboard;
 end
 
 run("SetParameters.m")
@@ -119,7 +120,7 @@ c_LPR_History       =  nan(2,Nt);
 cstar_History       =  nan(2,Nt);
 a                   =  nan(4,Ts_dt+1);
 J                   =  nan(1, (Duration/Ts)+1);
-N                   =  round(N/dt);
+
 
 
 
@@ -136,10 +137,12 @@ for j = 1:(Duration/Ts)
 
 
     %% Setting of the reference state to follow
-    cstar = interp1(t_ref,[Cd_ref;Cl_ref].',T,"linear").';
-%     if false
-%        cstar = interp1(t_ref,[Cd_ref;Cl_ref].',T:dt:T+(N-1)*dt,"linear").'; 
-%     end
+
+    if logical(Feedcstartype)
+        cstar = interp1(t_ref,[Cd_ref;Cl_ref].',T,"linear").';
+    else
+        cstar = interp1(t_ref,[Cd_ref;Cl_ref].',T:dt:T+(N-1)*dt,"linear").';
+    end
 
 
     %% Decision (with control ON/OFF) of the fluidic pinball actuation vector

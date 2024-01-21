@@ -1,5 +1,22 @@
 %% Part of the code to provide online plot of the MPC results
+% --- 
+fs     = 20;                                  % Default font size for figures
+lw     = 1.5;                                 % Default linewidth in figures
+axislw = 2;                                   % Default axis linewidth for figures
 
+warning off
+% --- Settings ---
+set(0,'DefaultFigureColor'    ,'w')         
+set(0,'DefaultLineLineWidth'  ,lw)
+set(0,'DefaultAxesFontSize'   ,fs)
+set(0,'DefaultLegendFontSize' ,fs)
+set(0,'DefaultTextFontSize'   ,fs)
+set(0,'DefaultAxesLineWidth'  ,axislw)
+set(0,'DefaultAxesBox'        ,'on');
+set(0,'defaultaxescolor'      ,[1 1 1]);
+set(0,'defaultLegendInterpreter'       ,'latex');
+set(0,'defaultTextInterpreter'         ,'latex');
+set(0,'DefaultAxesTickLabelInterpreter','latex');   
 
 
 colr   = [0.4940 0.1840 0.5560;

@@ -1,8 +1,6 @@
 
 
-
-
-%% Some checks on variables...
+%% Some checks on variables selected...
 if ~(mod(Ts, 0.05) == 0)
     Ts = max(round(Ts/0.05)*0.05, 0.05);
     disp(['Error: Ts must be a positive multiple of 0.05. Ts = ', num2str(Ts), ' selected']);
@@ -62,6 +60,13 @@ if ~(Duration >= StartControl)
     StartControl = round(Duration/4);
 end
 
+
+
+% Check for Feedcstar
+if ~(any(Feedcstartype == [0 1]))
+    disp('Error: Feedcstartype can be 0 or 1. Feedcstartype = 0 selected');
+    Feedcstartype = 0;
+end
 
 
 % Check for valid PerformTuningParams

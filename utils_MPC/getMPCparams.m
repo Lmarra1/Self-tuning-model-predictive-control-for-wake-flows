@@ -17,7 +17,7 @@
 
 %%% Length of prediction/control window
 %----->  N
-
+N                   =  round(N/dt);
 
 %% Prepare data to run the Bayesian Optimization
 
@@ -105,6 +105,7 @@ if PerformTuningParams
     TuningParams.Xi                      = Xi;
     TuningParams.ControlCase             = ControlCase;
     TuningParams.MPCPlotVerbose          = MPCPlotVerbose;
+    TuningParams.Feedcstartype           = Feedcstartype;
 
     if ~IncludeNtuning
         TuningParams.N    =  N;
@@ -138,6 +139,7 @@ end
 % UB   =   1*ones(N,3);            % Upper Bound of control input
 
 [params.N, params.Q, params.Ru, params.Rdu] = deal(N, Q, Ru, Rdu);
+
 
 LB = repmat(LB,1,N);
 UB = repmat(UB,1,N);

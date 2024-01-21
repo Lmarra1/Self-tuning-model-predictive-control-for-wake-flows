@@ -3,7 +3,7 @@ close all; clear; clc
 %% INSERT HERE THE FULL PATH OF Rscript.exe IN YOUR DEVICE AFTER THE INSTALLATION
 
 RscriptPath = '...PASTE IT HERE...';
-% e.g.  RscriptPath = 'C:\Program Files\R\R-4.2.2\bin\Rscript.exe';
+% e.g.  RscriptPath = 'C:\Program Files\R\R-4.3.2\bin\Rscript.exe';
 
 %%
 FolderLPRPath = strcat(pwd,'/utils_LPR');
@@ -27,10 +27,6 @@ fid = fopen('utils_LPR/RunLPR_R.m', 'w');
 fprintf(fid, '%s', new_content);
 fclose(fid);
 
-
-%%
-command = [RscriptPath, ' -e "install.packages(''lokern'')"'];
-status = system(command);
 
 %% Check...
 if status == 0

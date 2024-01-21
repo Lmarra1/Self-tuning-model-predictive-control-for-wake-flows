@@ -35,14 +35,16 @@ MPCPlotVerbose          = Param.MPCPlotVerbose;
 t_ref                   = Param.t_ref;
 Cd_ref                  = Param.Cd_ref;
 Cl_ref                  = Param.Cl_ref;
+Feedcstartype           = Param.Feedcstartype;
+
 
 %% Get tuning Parameters for current optimization step
 [Q, Rdu, Ru, N] = ReadTuningParamsfromEta(table2array(eta));
 
 if ~IncludeNtuning
-    N           = round(Param./dt);
+    N = Param.N;
 else
-    N           = round(N/dt);
+    N = round(N/dt);
 end
 
 [params.N, params.Q, params.Ru, params.Rdu] = deal(N, Q, Ru, Rdu);
@@ -75,10 +77,13 @@ for j = 1:(Duration/Ts)
     end
 
     %% Set reference state to follow
-    cstar = interp1(t_ref,[Cd_ref;Cl_ref].',T,"linear").';
-%     if false
-%        cstar = interp1(t_ref,[Cd_ref;Cl_ref].',T:dt:T+(N-1)*dt,"linear").'; 
-%     end
+
+    if logical(Feedcstartype)
+        cstar = interp1(t_ref,[Cd_ref;Cl_ref].',T,"linear").';
+    else
+        cstar = interp1(t_ref,[Cd_ref;Cl_ref].',T:dt:T+(N-1)*dt,"linear").';
+    end
+
 
     %% Perform (control on/off) calculations for optimal input vector
     if T < StartControl

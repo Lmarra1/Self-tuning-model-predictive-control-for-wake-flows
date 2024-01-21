@@ -46,15 +46,21 @@ Unlike the associated research paper, the plant here also corresponds with the p
 
 The code is written in MATLAB.
 
-For certain functionalities, R is required.
+For certain functionalities, R is required. The package 'lokern' has to be installed
 
 1. Install R: [Download R](https://www.r-project.org/)
 2. Install RStudio (optional but recommended): [Download RStudio](https://www.rstudio.com/products/rstudio/download/)
-3. Identify the path to `Rscript.exe`.
-4. Open the Matlab function 'SetUp.m' and paste the Rscript.exe path where specified
-5. Run the MATLAB script 'SetUp.m'
-6. Run the code 'MPC_main.m'
-7. ...ENJOY!
+3. Install the Lokern package by running the following command in the R console:
+
+    ```
+    install.packages("lokern")
+
+    ```
+4. Identify the path to `Rscript.exe`.
+5. Open the Matlab function 'SetUp.m' and paste the Rscript.exe path where specified
+6. Run the MATLAB script 'SetUp.m'
+7. Run the code 'MPC_main.m'
+8. ...ENJOY!
 
 
 Part of the code was implemented based on the MPC code of the article:
