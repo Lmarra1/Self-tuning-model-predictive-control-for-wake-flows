@@ -139,9 +139,9 @@ for j = 1:(Duration/Ts)
     %% Setting of the reference state to follow
 
     if logical(Feedcstartype)
-        cstar = interp1(t_ref,[Cd_ref;Cl_ref].',T,"linear").';
+        cstar = interp1([0, t_ref, t_ref(end)+1], [nan Cd_ref Cd_ref(end); nan Cl_ref Cl_ref(end)].',T,"linear","extrap").';
     else
-        cstar = interp1(t_ref,[Cd_ref;Cl_ref].',T:dt:T+(N-1)*dt,"linear").';
+        cstar = interp1([0, t_ref, t_ref(end)+1], [nan Cd_ref Cd_ref(end); nan Cl_ref Cl_ref(end)].',T:dt:T+(N-1)*dt,"linear","extrap").';
     end
 
 
