@@ -132,23 +132,23 @@ end
 
 % Check for manual selection parameters if tuning is not performed
 if ~PerformTuningParams
-    if ~(N > 0)
-        disp('Error: N must be a positive value when PerformTuningParams is false.');
-        N = 3/dt;
+    if ~(N > 0 && rem(N,dt) == 0)
+        disp('Error: N must be a positive multiple of dt: N = 3 c.u. selected');
+        N = 3;
     end
 
     if ~(all(Q > 0) && length(Q) == 2)
-        disp('Error: All elements of Q must be positive when PerformTuningParams is false.');
+        disp('Error: All elements of Q must be positive');
         Q = [4, 2]; 
     end
 
     if ~(all(Rdu >= 0) && length(Rdu) == 3)
-        disp('Error: All elements of Rdu must be non-negative when PerformTuningParams is false.');
+        disp('Error: All elements of Rdu must be non-negative');
         Rdu = [1, 1, 1]/3; 
     end
 
     if ~(all(Ru >= 0) && length(Ru) == 3)
-        disp('Error: All elements of Ru must be non-negative when PerformTuningParams is false.');
+        disp('Error: All elements of Ru must be non-negative');
         Ru = [1, 1, 1]/3; 
     end
 end
