@@ -12,12 +12,12 @@
 %% Parameters for MPC
 Ts            = 0.5;                     % Time between MPC optimization (must be multiple of 0.05) [c.u.] (Default: 0.5)
 dt            = 0.1;                     % Time interval for plant model integration (must be a divisor of Ts) [c.u.] (Default: 0.1)
-StartControl  = 20;                      % Time when MPC begins (must be multiple of Ts) [c.u.] (Default: 50)
+StartControl  = 50;                      % Time when MPC begins (must be multiple of Ts) [c.u.] (Default: 50)
 Duration      = 200;                     % Total simulation duration (must be multiple of Ts) [c.u.] (Default: 200)
 AddNoise      = false;                   % Switch to "true" to consider measurement noise during MPC implementation
 NoiseLevel    = 0;                       % Level of noise as a percentage of full-scale unforced Cd and Cl
 UseLPR        = false;                   % Apply LPR to online state measurements during MPC
-MaxIterMPCopt = 800;                     % Max iterations for MPC optimization (Default: 500) 
+MaxIterMPCopt = 500;                     % Max iterations for MPC optimization (Default: 500) 
 Feedcstartype = 0;                       % Parameter for reference trajectory in MPC cost functional (0: considers history of cstar, other: only first component constant in the prediction/control window)
 
 
@@ -54,7 +54,7 @@ UseLPRtuning        = false;              % Use LPR during control tuning
 TuningParams.TuningCase   = "ExtendedSym"; 
 TuningParams.Duration     = 25;         % Duration of MPC simulations during parameter optimization (must be multiple of Ts) [c.u.] (Default: 30)
 TuningParams.StartControl = 5;          % Time when MPC control starts during parameter optimization (must be multiple of Ts) [c.u.] (Default: 5)
-TuningParams.DT           = 8;          % Time from end of each simulation to sample J_BO for parameter tuning
+TuningParams.DT           = 15;         % Time from end of each simulation to sample J_BO for parameter tuning
 
 % Params Case Extended
 TuningParams.Q1_lim    = [0 10];        % Search area for weight matrix Q = diag(Q1,Q2)
@@ -72,17 +72,30 @@ TuningParams.Rdu_lim   = [0 10];
 % General Params for Bayesian Optimization
 TuningParams.AcquisitionFunction      = 'expected-improvement';  % Acquisition function for NextPoint search during BO of parameters (Default: expected-improvement)
 TuningParams.MaxObjectiveEvaluations  = 60;                      % Maximum number of BO iteration for parameter tuning
-TuningParams.NumSeedingPt             = 15;                      % Number of seeding points to explore the search area before running BO of parameters
+TuningParams.NumSeedingPt             = 10;                      % Number of seeding points to explore the search area before running BO of parameters
 
 
 
 % Manual selection of parameters (in case PerformTuningParams set to false)
 % The following parameters will be ignored in case BO is used!
 
-N   =  4;                                % Length of the prediction window (Default: 3 c.u.)
-Q   =  [9.6924 7.1122];                  % Weight matrix for the state components errors
-Rdu =  [9.6183 2.8331 2.8331];           % Penalization of Input Variability
-Ru  =  [7.9812 0.026097 0.026097];       % Penalization of Input
+% Best parameter for ControlCase 0 and no noise
+N   =  4;                                  % Length of the prediction window (Default: 3 c.u.)
+Q   =  [9.6924 7.1122];                    % Weight matrix for the state components errors
+Rdu =  [9.6183 2.8331 2.8331];             % Penalization of Input Variability
+Ru  =  [7.9812 0.026097 0.026097];         % Penalization of Input
+
+% Best parameter for ControlCase 1 and no noise (step Cl)
+% N   =  3.5;                                % Length of the prediction window (Default: 3 c.u.)
+% Q   =  [9.3718 8.0339];                    % Weight matrix for the state components errors
+% Rdu =  [5.2078 0.027429 0.027429];         % Penalization of Input Variability
+% Ru  =  [0.076749 0.59942 0.59942];         % Penalization of Input
+
+% Best parameter for ControlCase 2 and no noise (step Cl)
+% N   =  3.5;                                % Length of the prediction window (Default: 3 c.u.)
+% Q   =  [7.9464 8.0448];                    % Weight matrix for the state components errors
+% Rdu =  [5.1807 0.060485 0.060485];         % Penalization of Input Variability
+% Ru  =  [0.78682 0.62138 0.62138];          % Penalization of Input
 
 
 
@@ -122,7 +135,6 @@ switch ControlCase
         Cd_ref = zeros(size(t_ref));
         Cl_ref = zeros(size(t_ref));
 end
-
 
 
 
